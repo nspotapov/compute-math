@@ -1,5 +1,4 @@
 import numpy as np
-from pyparsing import alphas
 
 
 def point_info(x, f):
@@ -36,7 +35,7 @@ def hooke_jeeves(f, x0, delta0, epsilon, alpha):
                 x = sample_x
 
             print()
-            print('Новая базовая точка', point_info(x, func))
+            print('Новая базовая точка', point_info(x, f))
 
         else:
             print('Исследующий поиск ПРОВАЛЕН')
@@ -73,7 +72,7 @@ def exploratory_search(f, x, delta):
             f_x_new = f_x_down
 
     if (any([x_new[i] != x[i] for i in range(len(x))])):
-        print('Найдена точка', x_new, func(x_new))
+        print('Найдена точка', x_new, f(x_new))
     return x_new
 
 
@@ -86,22 +85,57 @@ def sample_search(f, x1, x2):
     return x2
 
 
-def func(x):
-    return x[0] ** 2 + 2 * x[1] ** 2 + 5 * x[2] ** 2 - 2 * x[0] * x[1] - 4 * x[0] * x[2] - 2 * x[2]
-    # return 8 * (x[0] ** 2) + 4 * x[0] * x[1] + 5 * (x[1] ** 2)
+def f1():
+    x0 = [1, 0, 0]
+    delta0 = [1e+6, 1e+6, 1e+6]
+    alpha = 2
+    epsilon = 1e-4
+    def f(x): return x[0] ** 2 + 2 * x[1] ** 2 + 5 * \
+        x[2] ** 2 - 2 * x[0] * x[1] - 4 * x[0] * x[2] - 2 * x[2]
 
 
-# x0 = [-4, -4]
-# delta0 = [1, 1]
+def f2():
+    x0 = [1, 1]
+    delta0 = [1, 1]
+    alpha = 2
+    epsilon = 1e-6
 
-x0 = [1, 0, 0]
-delta0 = [1e+6, 1e+6, 1e+6]
+    def f(x): return x[0] ** 4 + x[1] ** 2 - 4 * x[0] * x[1]
 
-alpha = 2
-epsilon = 1e-4
+    x, val = hooke_jeeves(f, x0, delta0, epsilon, alpha)
+    return x, val
 
-x, val = hooke_jeeves(func, x0, delta0, epsilon, alpha)
+
+def f3():
+    x0 = [1, 0]
+    delta0 = [1, 1]
+    alpha = 2
+    epsilon = 1e-5
+
+    def f(x): return x[0] * np.exp(x[0]) - (1 + np.exp(x[0])) * np.sin(x[1])
+
+    x, val = hooke_jeeves(f, x0, delta0, epsilon, alpha)
+    return x, val
+
+
+def example():
+    x0 = [-4, -4]
+    delta0 = [1, 1]
+    alpha = 2
+    epsilon = 1e-4
+
+    def f(x): return 8 * (x[0] ** 2) + 4 * x[0] * x[1] + 5 * (x[1] ** 2)
+
+    x, val = hooke_jeeves(f, x0, delta0, epsilon, alpha)
+    return x, val
+
+
+# x, val = f1()
+# x, val = f2()
+# x, val = f3()
+x, val = example()
 
 print()
+print('=' * 40)
 print("Точка экстремумв:", x)
 print("Минимальное значение функции:", val)
